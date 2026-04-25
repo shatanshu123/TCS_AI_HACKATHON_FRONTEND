@@ -1,23 +1,71 @@
-# InvoiceAiUi
+# Invoice AI Processing Assistant
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.8.
+An AI-powered assistant for automated invoice processing that accepts invoice uploads, extracts key data fields using OCR and pattern recognition, and presents results in a simple UI for review and correction.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- Upload multiple invoice documents (PDF or image formats)
+- Automatic text extraction using OCR (Tesseract.js)
+- Intelligent data extraction for vendor, amount, date, invoice number, and description
+- Contextual validation of extracted fields
+- Interactive review and correction interface
+- Batch processing support
+
+## Technology Stack
+
+- Angular 21
+- Tesseract.js for OCR
+- pdf-parse for PDF text extraction
+- TypeScript
+
+## Development
+
+### Prerequisites
+
+- Node.js and npm
+- Angular CLI
+
+### Installation
 
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Development Server
 
 ```bash
-ng generate component component-name
+npm start
+```
+
+Navigate to `http://localhost:4200/` (or the port shown in the terminal).
+
+### Build
+
+```bash
+npm run build
+```
+
+## Usage
+
+1. Click "Choose Files" to select invoice documents (PDF, JPG, PNG)
+2. Click "Process Invoices" to start automated processing
+3. Review extracted data for each invoice
+4. Edit fields as needed and see validation status update
+5. Use Previous/Next buttons to navigate through batch results
+
+## Data Processing
+
+The app uses:
+- OCR for text extraction from images
+- PDF parsing for document text
+- Regex patterns for field identification
+- Basic validation rules for data quality
+
+## Privacy & Compliance
+
+- All processing happens client-side
+- No data is sent to external servers
+- Suitable for sensitive financial documents
 ```
 
 For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:

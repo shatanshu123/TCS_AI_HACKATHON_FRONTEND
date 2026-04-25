@@ -1,0 +1,209 @@
+<div class="dashboard-wrapper">
+  <!-- Header/Navbar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-brand">
+        <span class="logo">📄</span>
+        <span class="brand-text">Invoice AI</span>
+      </div>
+      <div class="navbar-content">
+        <h1 class="navbar-title">{{ title() }}</h1>
+      </div>
+      <div class="navbar-user">
+        <div class="profile-container">
+          <button class="profile-icon-btn" (click)="toggleProfileDropdown()" title="Profile">
+            <div class="user-avatar">{{ (currentUser()?.name || 'U').charAt(0).toUpperCase() }}</div>
+          </button>
+          
+          <!-- Profile Dropdown -->
+          <div class="profile-dropdown" *ngIf="showProfileDropdown()">
+            <div class="profile-header">
+              <div class="profile-avatar">{{ (currentUser()?.name || 'U').charAt(0).toUpperCase() }}</div>
+              <div class="profile-info">
+                <p class="profile-name">{{ currentUser()?.name }}</p>
+                <p class="profile-email">{{ currentUser()?.email }}</p>
+                <p class="profile-last-login" *ngIf="currentUser()?.lastLogin">
+                  Last login: {{ formatLastLogin(currentUser()?.lastLogin) }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <button class="btn-logout" (click)="logout()" title="Logout">
+          <span>🚪</span> Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="dashboard-container">
+    <div class="content-wrapper">
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📤</div>
+          <div class="stat-content">
+            <p class="stat-label">Uploaded Files</p>
+            <p class="stat-value">{{ uploadedCount() }}</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-content">
+            <p class="stat-label">Processed</p>
+            <p class="stat-value">{{ processedCount() }}</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">❌</div>
+          <div class="stat-content">
+            <p class="stat-label">Errors</p>
+            <p class="stat-value">{{ errorCount() }}</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-content">
+            <p class="stat-label">Results</p>
+            <p class="stat-value">{{ results().length }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Section -->
+      <div class="card upload-section">
+        <div class="card-header">
+          <h2>Upload Invoice Files</h2>
+          <p class="card-subtitle">Select PDF or image files to process</p>
+        </div>
+
+        <div class="card-body">
+          <div class="upload-area">
+            <div class="upload-icon">📄</div>
+            <h3>Drag and drop files here</h3>
+            <p>or</p>
+            <label class="file-input-label">
+              <span class="btn btn-primary">Choose Files</span>
+              <input
+                type="file"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png"
+                (change)="onFileSelected($event)"
+                hidden
+              />
+            </label>
+            <p class="file-hint">Supported: PDF, JPG, PNG</p>
+          </div>
+
+          <div *ngIf="files.length > 0" class="selected-files">
+            <h4>Selected Files ({{ files.length }})</h4>
+            <div class="file-list">
+              <div *ngFor="let file of files" class="file-item">
+                <span class="file-icon">📋</span>
+                <div class="file-info">
+                  <p class="file-name">{{ file.name }}</p>
+                  <p class="file-size">{{ (file.size / 1024).toFixed(2) }} KB</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="upload-actions">
+            <button
+              class="btn btn-primary btn-large"
+              (click)="processInvoices()"
+              [disabled]="files.length === 0 || processing()"
+            >
+              <span *ngIf="!processing()">🚀 Process Invoices</span>
+              <span *ngIf="processing()">Processing...</span>
+            </button>
+            <button
+              *ngIf="results().length > 0"
+              class="btn btn-secondary btn-large"
+              (click)="clearResults()"
+            >
+              🗑️ Clear Results
+            </button>
+          </div>
+
+          <!-- Progress Bar -->
+          <div *ngIf="processing()" class="progress-section">
+            <div class="progress-info">
+              <p>Processing: {{ progress().current }} / {{ progress().total }}</p>
+              <p class="progress-percent">{{ ((progress().current / progress().total) * 100).toFixed(0) }}%</p>
+            </div>
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                [style.width.%]="(progress().current / progress().total) * 100"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div *ngIf="results().length > 0" class="card results-section">
+        <div class="card-header">
+          <h2>Processing Results</h2>
+          <p class="card-subtitle">Total: {{ results().length }} invoices processed</p>
+        </div>
+
+        <div class="card-body">
+          <div *ngIf="results().length > 0" class="result-container">
+            <div class="result-card">
+              <div class="result-header">
+                <h3>Invoice {{ currentIndex() + 1 }} of {{ results().length }}</h3>
+                <div class="result-actions">
+                  <button
+                    class="btn-nav"
+                    (click)="previousInvoice()"
+                    [disabled]="currentIndex() === 0"
+                  >
+                    ← Previous
+                  </button>
+                  <button
+                    class="btn-nav"
+                    (click)="nextInvoice()"
+                    [disabled]="currentIndex() === results().length - 1"
+                  >
+                    Next →
+                  </button>
+                </div>
+              </div>
+
+              <div class="result-content">
+                <div class="result-item">
+                  <span class="result-label">Invoice Number:</span>
+                  <span class="result-value">{{ results()[currentIndex()]?.invoiceNumber || 'N/A' }}</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Date:</span>
+                  <span class="result-value">{{ results()[currentIndex()]?.date || 'N/A' }}</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Amount:</span>
+                  <span class="result-value">${{ results()[currentIndex()]?.totalAmount?.toFixed(2) || '0.00' }}</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Vendor:</span>
+                  <span class="result-value">{{ results()[currentIndex()]?.vendor || 'N/A' }}</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Description:</span>
+                  <span class="result-value">{{ results()[currentIndex()]?.description || 'N/A' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-large" (click)="downloadResults()">
+            💾 Download Results as JSON
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
