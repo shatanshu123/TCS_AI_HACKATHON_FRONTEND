@@ -40,7 +40,23 @@
   <!-- Main Content -->
   <div class="dashboard-container">
     <div class="content-wrapper">
-      <!-- Stats Cards -->
+      <!-- Quick Navigation -->
+      <div class="quick-nav">
+        <button class="nav-btn nav-primary" (click)="navigateTo('/invoice-list')">
+          <span class="nav-icon">📋</span>
+          <div class="nav-content">
+            <strong>View Invoices</strong>
+            <small>Browse all processed invoices</small>
+          </div>
+        </button>
+        <button class="nav-btn nav-primary" (click)="navigateTo('/batch-upload')">
+          <span class="nav-icon">📦</span>
+          <div class="nav-content">
+            <strong>Batch Upload</strong>
+            <small>Process multiple files</small>
+          </div>
+        </button>
+      </div>
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon">📤</div>
@@ -75,57 +91,39 @@
       <!-- Upload Section -->
       <div class="card upload-section">
         <div class="card-header">
-          <h2>Upload Invoice Files</h2>
-          <p class="card-subtitle">Select PDF or image files to process</p>
+          <h2>Upload Invoice File</h2>
+          <p class="card-subtitle">Select a PDF file to upload and process.</p>
+        </div>
+        <div *ngIf="uploadError()" class="error-message">
+          {{ uploadError() }}
         </div>
 
         <div class="card-body">
           <div class="upload-area">
             <div class="upload-icon">📄</div>
-            <h3>Drag and drop files here</h3>
+            <h3>Select PDF invoice</h3>
             <p>or</p>
             <label class="file-input-label">
-              <span class="btn btn-primary">Choose Files</span>
+              <span class="btn btn-primary">Choose PDF File</span>
               <input
                 type="file"
-                multiple
-                accept=".pdf,.jpg,.jpeg,.png"
+                accept=".pdf"
                 (change)="onFileSelected($event)"
                 hidden
               />
             </label>
-            <p class="file-hint">Supported: PDF, JPG, PNG</p>
+            <p class="file-hint">Only PDF files are supported. Maximum 1 file.</p>
           </div>
 
-          <div *ngIf="files.length > 0" class="selected-files">
-            <h4>Selected Files ({{ files.length }})</h4>
-            <div class="file-list">
-              <div *ngFor="let file of files" class="file-item">
-                <span class="file-icon">📋</span>
-                <div class="file-info">
-                  <p class="file-name">{{ file.name }}</p>
-                  <p class="file-size">{{ (file.size / 1024).toFixed(2) }} KB</p>
-                </div>
-              </div>
-            </div>
+          <div *ngIf="files.length > 0 && !processing()" class="selected-files-summary">
+            <p><strong>{{ files.length }}</strong> file selected.</p>
+            <ul class="selected-file-list">
+              <li *ngFor="let file of files">{{ file.name }}</li>
+            </ul>
           </div>
 
-          <div class="upload-actions">
-            <button
-              class="btn btn-primary btn-large"
-              (click)="processInvoices()"
-              [disabled]="files.length === 0 || processing()"
-            >
-              <span *ngIf="!processing()">🚀 Process Invoices</span>
-              <span *ngIf="processing()">Processing...</span>
-            </button>
-            <button
-              *ngIf="results().length > 0"
-              class="btn btn-secondary btn-large"
-              (click)="clearResults()"
-            >
-              🗑️ Clear Results
-            </button>
+          <div *ngIf="processing()" class="upload-status">
+            <p>Uploading and redirecting...</p>
           </div>
 
           <!-- Progress Bar -->

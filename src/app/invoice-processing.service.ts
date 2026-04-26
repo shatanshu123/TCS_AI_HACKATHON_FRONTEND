@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createWorker } from 'tesseract.js';
-import * as pdfParse from 'pdf-parse';
+import * as pdfParseLib from 'pdf-parse';
 
 export interface InvoiceData {
   vendor: string;
@@ -48,7 +48,8 @@ export class InvoiceProcessingService {
 
   private async extractTextFromPDF(file: File): Promise<string> {
     const arrayBuffer = await file.arrayBuffer();
-    const data = await (pdfParse as any)(new Uint8Array(arrayBuffer));
+    const pdfParser = (pdfParseLib as any).default ?? pdfParseLib;
+    const data = await pdfParser(new Uint8Array(arrayBuffer));
     return data.text;
   }
 

@@ -1,0 +1,558 @@
+.batch-upload-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 15px;
+  text-align: center;
+}
+
+.page-header h1 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  color: #333;
+}
+
+.subtitle {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.error-message {
+  padding: 15px;
+  background-color: #ffebee;
+  color: #c62828;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  border-left: 4px solid #c62828;
+}
+
+/* Upload Section */
+.upload-section {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.upload-area {
+  margin-bottom: 30px;
+  text-align: center;
+  max-width: 700px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.upload-zone {
+  border: 3px dashed #007bff;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: #f0f8ff;
+  transition: all 0.3s ease;
+}
+
+.upload-zone:hover {
+  background-color: #e6f2ff;
+  border-color: #0056b3;
+}
+
+.upload-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.upload-zone h2 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.upload-zone p {
+  margin: 8px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.upload-hint {
+  color: #999;
+  font-size: 12px;
+  margin-top: 12px;
+}
+
+/* Files List */
+.files-list {
+  margin-bottom: 20px;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.list-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.files-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.file-name {
+  flex: 1;
+  color: #333;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+.file-size {
+  color: #999;
+  font-size: 12px;
+  margin: 0 12px;
+}
+
+/* Selected Files Section */
+.selected-files-section {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.selected-files-section h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.selected-file-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.selected-file-list li {
+  padding: 8px 12px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #333;
+  word-break: break-word;
+}
+
+/* Upload Status */
+.upload-status {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  text-align: center;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.upload-status p {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+/* Progress Section */
+.progress-section {
+  margin-top: 20px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.progress-info p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.progress-percent {
+  font-weight: bold;
+  color: #007bff;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #007bff;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+/* Job Status Section */
+.job-status-section {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.job-info {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.job-info h2 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 22px;
+}
+
+.job-info p {
+  margin: 5px 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.mono {
+  font-family: 'Courier New', monospace;
+  background-color: #f0f0f0;
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+/* Status Card */
+.status-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.status-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Progress Bar */
+.progress-container {
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.progress-text {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Timeline Info */
+.timeline-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+.timeline-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-item strong {
+  color: #555;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.timeline-item span {
+  color: #333;
+  font-size: 13px;
+}
+
+/* Results Preview */
+.results-preview {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  border-left: 4px solid #4CAF50;
+}
+
+.results-preview h3 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.result-item {
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.result-status {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-completed {
+  background-color: #c8e6c9;
+  color: #2e7d32;
+}
+
+.status-processing {
+  background-color: #fff9c4;
+  color: #f57f17;
+}
+
+.status-queued {
+  background-color: #bbdefb;
+  color: #0d47a1;
+}
+
+.status-failed {
+  background-color: #ffcdd2;
+  color: #c62828;
+}
+
+.result-extraction {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.extraction-field {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.extraction-field strong {
+  color: #555;
+}
+
+/* Job Actions */
+.job-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #e0e0e0;
+  flex-wrap: wrap;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+
+/* Button Styles */
+.btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #545b62;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.btn-large {
+  padding: 12px 24px;
+  font-size: 15px;
+  width: 100%;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .batch-upload-container {
+    padding: 10px;
+  }
+
+  .upload-zone {
+    padding: 30px 15px;
+  }
+
+  .upload-zone h2 {
+    font-size: 18px;
+  }
+
+  .list-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .file-item {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .timeline-info {
+    grid-template-columns: 1fr;
+  }
+
+  .status-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .job-actions {
+    flex-direction: column;
+  }
+
+  .job-actions .btn {
+    width: 100%;
+  }
+}

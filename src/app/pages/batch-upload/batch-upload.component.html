@@ -1,0 +1,62 @@
+<div class="batch-upload-container">
+  <div class="page-header">
+    <h1>Batch Upload Invoices</h1>
+    <p class="subtitle">Upload up to 50 PDF invoice files for processing</p>
+  </div>
+
+  <div *ngIf="error()" class="error-message">
+    {{ error() }}
+  </div>
+
+  <!-- File Upload Section -->
+  <div class="upload-section">
+    <div class="upload-area">
+      <div class="upload-zone">
+        <input
+          type="file"
+          #fileInput
+          multiple
+          accept=".pdf"
+          (change)="onFileSelected($event)"
+          style="display: none"
+        />
+        <div class="upload-icon">📄</div>
+        <h2>Choose PDF Files</h2>
+        <p>or</p>
+        <button class="btn btn-primary" (click)="fileInput.click()">
+          Select PDF Files
+        </button>
+        <p class="upload-hint">
+          Only PDF files are supported. Maximum 50 files.
+        </p>
+      </div>
+    </div>
+
+    <!-- Selected Files Summary -->
+    <div *ngIf="files.length > 0 && !uploading()" class="selected-files-section">
+      <h3>Selected Files ({{ files.length }})</h3>
+      <ul class="selected-file-list">
+        <li *ngFor="let file of files">{{ file.name }}</li>
+      </ul>
+    </div>
+
+    <!-- Upload Status -->
+    <div *ngIf="uploading()" class="upload-status">
+      <p>Uploading and processing {{ files.length }} invoice{{ files.length === 1 ? '' : 's' }}...</p>
+      
+      <!-- Progress Bar -->
+      <div class="progress-section">
+        <div class="progress-info">
+          <p>Processing: {{ progress().current }} / {{ progress().total }}</p>
+          <p class="progress-percent">{{ ((progress().current / progress().total) * 100).toFixed(0) }}%</p>
+        </div>
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            [style.width.%]="(progress().current / progress().total) * 100"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

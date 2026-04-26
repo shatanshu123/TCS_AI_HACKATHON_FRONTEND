@@ -1,0 +1,70 @@
+<div class="invoice-list-container">
+  <div class="page-header-fullwidth">
+    <div class="page-header-content">
+      <h1>All Invoices</h1>
+      <button class="btn btn-primary" (click)="refreshInvoices()" [disabled]="loading()">
+        {{ loading() ? 'Loading...' : 'Refresh' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div *ngIf="error()" class="error-message">
+      {{ error() }}
+    </div>
+
+    <div *ngIf="loading()" class="loading-spinner">
+      Loading invoices...
+    </div>
+
+    <div *ngIf="!loading() && invoices().length === 0" class="empty-state">
+      <p>No invoices found. Upload invoices to get started.</p>
+    </div>
+
+    <div *ngIf="!loading() && invoices().length > 0" class="invoices-grid">
+      <div *ngFor="let invoice of invoices()" class="invoice-card">
+        <div class="card-header">
+          <h3>{{ invoice.original_filename }}</h3>
+          <span class="status-badge" [ngClass]="'status-' + invoice.status">
+            {{ invoice.status }}
+          </span>
+        </div>
+
+        <div class="card-body">
+          <div class="confidence-section">
+            <p class="label">Overall Confidence</p>
+            <div class="confidence-bar">
+              <div
+                class="confidence-fill"
+                [style.width.%]="invoice.overall_confidence || 0"
+                [style.background-color]="getConfidenceColor(invoice.overall_confidence || 0)"
+              ></div>
+            </div>
+            <p class="confidence-value">
+              {{ invoice.overall_confidence || 0 }}% - {{ getConfidenceLevel(invoice.overall_confidence || 0) }}
+            </p>
+          </div>
+
+          <div class="extraction-preview">
+            <h4>Extracted Data</h4>
+            <ul>
+              <li *ngFor="let key of getExtractionKeys(invoice.extraction) | slice:0:3">
+                <strong>{{ key }}:</strong> {{ getExtractionValue(invoice.extraction, key) }}
+                <span class="mini-confidence">({{ (getExtractionConfidence(invoice.extraction, key) * 100).toFixed(0) }}%)</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card-actions">
+            <button class="btn btn-secondary" (click)="$event.stopPropagation(); editInvoice(invoice)">
+              Edit & Review
+            </button>
+            <button class="btn btn-secondary" (click)="downloadInvoice(invoice, $event)">
+              Download
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
