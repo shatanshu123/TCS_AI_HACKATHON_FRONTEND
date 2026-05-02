@@ -112,29 +112,22 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  formatLastLogin(date?: string | Date): string {
+  formatDateTime(date?: string | Date): string {
     if (!date) return '';
 
     const parsed = typeof date === 'string' ? new Date(date) : date;
     if (Number.isNaN(parsed.getTime())) return '';
 
-    const now = new Date();
-    const diffMs = now.getTime() - parsed.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const day = String(parsed.getDate()).padStart(2, '0');
+    const month = String(parsed.getMonth() + 1).padStart(2, '0');
+    const year = parsed.getFullYear();
+    let hours = parsed.getHours();
+    const minutes = String(parsed.getMinutes()).padStart(2, '0');
+    const period = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    const formattedHour = String(hours).padStart(2, '0');
 
-    if (diffMinutes < 1) {
-      return 'Just now';
-    } else if (diffMinutes < 60) {
-      return `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} ago`;
-    } else if (diffHours < 24) {
-      return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-    } else if (diffDays < 7) {
-      return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-    } else {
-      return parsed.toLocaleDateString();
-    }
+    return `${day}/${month}/${year} ${formattedHour}:${minutes} ${period}`;
   }
 
   toggleProfileDropdown() {
@@ -150,8 +143,7 @@ export class DashboardComponent implements OnInit {
   }
 
   logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.authService.logout().subscribe();
   }
 
   navigateTo(path: string) {

@@ -1,4 +1,12 @@
 <div class="login-container">
+  <!-- Error Popup -->
+  <div class="error-popup" *ngIf="errorMessage()">
+    <div class="error-popup-content">
+      <span class="error-popup-text">{{ errorMessage() }}</span>
+      <button type="button" class="error-popup-close" (click)="clearErrorMessage()">&times;</button>
+    </div>
+  </div>
+
   <div class="login-card">
     <div class="login-header">
       <div class="logo">📄</div>
@@ -60,17 +68,9 @@
             </span>
           </div>
 
-          <div class="error-message" *ngIf="errorMessage()">
-            {{ errorMessage() }}
-          </div>
-
           <button type="submit" class="btn btn-primary" [disabled]="isLoading()">
             <span *ngIf="!isLoading()">Sign In</span>
             <span *ngIf="isLoading()">Signing in...</span>
-          </button>
-
-          <button type="button" class="btn btn-secondary btn-demo" (click)="fillDemoCredentials()">
-            Use Demo Credentials
           </button>
         </form>
       </div>
@@ -138,10 +138,6 @@
             <span class="error-text" *ngIf="signupForm.get('confirmPassword')?.invalid && signupForm.get('confirmPassword')?.touched">
               Please confirm your password
             </span>
-          </div>
-
-          <div class="error-message" *ngIf="errorMessage()">
-            {{ errorMessage() }}
           </div>
 
           <button type="submit" class="btn btn-primary" [disabled]="isLoading()">

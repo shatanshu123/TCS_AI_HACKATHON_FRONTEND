@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,8 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -45,19 +47,36 @@ export class LoginComponent {
     this.errorMessage.set('');
   }
 
+  clearErrorMessage() {
+    this.errorMessage.set('');
+  }
+
   onLogin() {
     if (this.loginForm.invalid) {
+      console.log('Form invalid, validation errors:', this.loginForm.errors);
       this.errorMessage.set('Please fill in all fields correctly');
       return;
     }
 
     this.isLoading.set(true);
+    this.errorMessage.set('');
 
-    // Disabled login process - just navigate to dashboard
-    setTimeout(() => {
-      this.router.navigate(['/dashboard']);
-      this.isLoading.set(false);
-    }, 500);
+    const { email, password } = this.loginForm.value;
+    console.log('Form values:', { email, password, formValue: this.loginForm.value });
+
+    this.authService.login(email, password)
+      .then((response: any) => {
+        this.isLoading.set(false);
+        if (response.otp_required && response.user) {
+          this.router.navigate(['/verify-otp'], { queryParams: { email, userId: response.user.id } });
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
+      })
+      .catch((error: any) => {
+        this.isLoading.set(false);
+        this.errorMessage.set(error?.message || 'Login failed');
+      });
   }
 
   onSignup() {
@@ -67,19 +86,22 @@ export class LoginComponent {
     }
 
     this.isLoading.set(true);
+    this.errorMessage.set('');
 
-    // Disabled signup process - just navigate to dashboard
-    setTimeout(() => {
-      this.router.navigate(['/dashboard']);
-      this.isLoading.set(false);
-    }, 500);
-  }
+    const { name, email, password, confirmPassword } = this.signupForm.value;
 
-  // Demo credentials
-  fillDemoCredentials() {
-    this.loginForm.patchValue({
-      email: 'john@example.com',
-      password: 'password123'
-    });
+    this.authService.signup(name, email, password, confirmPassword)
+      .then((response: any) => {
+        this.isLoading.set(false);
+        if (response.otp_required && response.user) {
+          this.router.navigate(['/verify-otp'], { queryParams: { email, userId: response.user.id } });
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
+      })
+      .catch((error: any) => {
+        this.isLoading.set(false);
+        this.errorMessage.set(error?.message || 'Signup failed');
+      });
   }
 }

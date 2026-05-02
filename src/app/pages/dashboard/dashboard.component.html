@@ -12,18 +12,18 @@
       <div class="navbar-user">
         <div class="profile-container">
           <button class="profile-icon-btn" (click)="toggleProfileDropdown()" title="Profile">
-            <div class="user-avatar">{{ (currentUser()?.name || 'U').charAt(0).toUpperCase() }}</div>
+            <div class="user-avatar">{{ (currentUser()?.full_name || 'U').charAt(0).toUpperCase() }}</div>
           </button>
           
           <!-- Profile Dropdown -->
           <div class="profile-dropdown" *ngIf="showProfileDropdown()">
             <div class="profile-header">
-              <div class="profile-avatar">{{ (currentUser()?.name || 'U').charAt(0).toUpperCase() }}</div>
+              <div class="profile-avatar">{{ (currentUser()?.full_name || 'U').charAt(0).toUpperCase() }}</div>
               <div class="profile-info">
-                <p class="profile-name">{{ currentUser()?.name }}</p>
+                <p class="profile-name">{{ currentUser()?.full_name }}</p>
                 <p class="profile-email">{{ currentUser()?.email }}</p>
-                <p class="profile-last-login" *ngIf="currentUser()?.lastLogin">
-                  Last login: {{ formatLastLogin(currentUser()?.lastLogin) }}
+                <p class="profile-last-login" *ngIf="currentUser()?.last_login">
+                  Last Login: {{ formatDateTime(currentUser()?.last_login) }}
                 </p>
               </div>
             </div>

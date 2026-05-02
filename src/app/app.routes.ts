@@ -4,10 +4,12 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { InvoiceListComponent } from './pages/invoice-list/invoice-list.component';
 import { InvoiceDetailComponent } from './pages/invoice-detail/invoice-detail.component';
 import { BatchUploadComponent } from './pages/batch-upload/batch-upload.component';
+import { OtpVerification } from './pages/otp-verification/otp-verification';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+  { path: 'verify-otp', component: OtpVerification },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'invoice-list', component: InvoiceListComponent },
   { path: 'invoice-detail/:id', component: InvoiceDetailComponent },

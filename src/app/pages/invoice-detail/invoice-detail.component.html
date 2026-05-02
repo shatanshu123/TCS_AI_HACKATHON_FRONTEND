@@ -1,8 +1,12 @@
 <div class="invoice-detail-container">
   <div class="detail-header">
-    <button class="btn btn-secondary" (click)="goBack()">← Back</button>
+    <button class="btn btn-secondary btn-icon" (click)="goBack()">← Back</button>
     <div class="header-content">
-      <h1>Invoice Details</h1>
+      <div>
+        <p class="eyebrow">Invoice Intelligence</p>
+        <h1>Invoice Details</h1>
+        <p class="subtitle">Review document metadata, extraction accuracy, confidence scoring and validation results.</p>
+      </div>
       <span *ngIf="invoice()" class="status-badge" [ngClass]="'status-' + invoice()?.status">
         {{ invoice()?.status }}
       </span>
@@ -37,29 +41,51 @@
   </div>
 
   <div *ngIf="!loading() && invoice() as inv" class="detail-content">
-    <!-- Invoice Metadata -->
+    <div class="preview-card">
+      <div class="document-graphic">
+        <div class="doc-top">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="doc-body">
+          <div class="line line-large"></div>
+          <div class="line line-medium"></div>
+          <div class="line line-small"></div>
+          <div class="line line-full"></div>
+          <div class="line line-half"></div>
+          <div class="line line-full"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="metadata-section">
       <div class="metadata-item">
-        <strong>Filename:</strong>
+        <strong>Filename</strong>
         <span>{{ inv.original_filename }}</span>
       </div>
       <div class="metadata-item">
-        <strong>Invoice ID:</strong>
+        <strong>Invoice ID</strong>
         <span class="mono">{{ inv.id }}</span>
       </div>
       <div class="metadata-item">
-        <strong>File Size:</strong>
+        <strong>File Size</strong>
         <span>
           {{ inv.file_size != null ? ((inv.file_size / 1024) | number: '1.0-0') + ' KB' : 'N/A' }}
         </span>
       </div>
       <div class="metadata-item">
-        <strong>Content Type:</strong>
+        <strong>Content Type</strong>
         <span>{{ inv.content_type || 'N/A' }}</span>
+      </div>
+      <div class="metadata-item">
+        <strong>Extracted Fields</strong>
+        <span>{{ getExtractionKeys(inv.extraction).length }}</span>
+      </div>
+      <div class="metadata-item">
+        <strong>PII Masking</strong>
+        <span>{{ inv.pii?.masked ? 'Enabled' : 'Disabled' }}</span>
       </div>
     </div>
 
-    <!-- Tab Navigation -->
     <div class="tab-navigation">
       <button
         class="tab-btn"
@@ -84,7 +110,6 @@
       </button>
     </div>
 
-    <!-- Extracted Data Tab -->
     <div *ngIf="activeTab() === 'extraction'" class="tab-content">
       <div *ngIf="isEditing()" class="edit-mode-notice">
         <strong>⚠️ Editing Mode:</strong> Modify the values below and click "Save Changes" to update.
@@ -121,7 +146,6 @@
         </div>
       </div>
 
-      <!-- Validation Summary -->
       <div class="validation-section">
         <h3>Validation</h3>
         <div *ngIf="invoice()?.validation?.valid" class="validation-success">
@@ -129,7 +153,7 @@
         </div>
 
         <div *ngIf="getInvoiceValidationErrors().length">
-          <h4>Errors:</h4>
+          <h4>Errors</h4>
           <div class="error-list">
             <div *ngFor="let error of getInvoiceValidationErrors()" class="error-item">
               <strong *ngIf="error.field">{{ error.field }}:</strong> {{ error.message }}
@@ -138,7 +162,7 @@
         </div>
 
         <div *ngIf="getInvoiceValidationWarnings().length">
-          <h4>Warnings:</h4>
+          <h4>Warnings</h4>
           <ul>
             <li *ngFor="let warning of getInvoiceValidationWarnings()">
               <strong>{{ warning.field }}:</strong> {{ warning.message }}
@@ -148,51 +172,42 @@
       </div>
     </div>
 
-    <!-- Confidence Analysis Tab -->
     <div *ngIf="activeTab() === 'confidence'" class="tab-content">
       <div class="confidence-summary">
         <h3>Confidence Summary</h3>
         <div class="summary-grid">
           <div class="summary-item">
             <strong>Average Confidence</strong>
-            <p class="summary-value">
-              {{ getAverageConfidence() }}%
-            </p>
+            <p class="summary-value">{{ getAverageConfidence() }}%</p>
           </div>
           <div class="summary-item">
             <strong>High Confidence</strong>
-            <p class="summary-value">
-              {{ getHighConfidenceCount() }} fields
-            </p>
+            <p class="summary-value">{{ getHighConfidenceCount() }} fields</p>
           </div>
           <div class="summary-item">
             <strong>Medium Confidence</strong>
-            <p class="summary-value">
-              {{ getMediumConfidenceCount() }} fields
-            </p>
+            <p class="summary-value">{{ getMediumConfidenceCount() }} fields</p>
           </div>
           <div class="summary-item">
             <strong>Low Confidence</strong>
-            <p class="summary-value">
-              {{ uiVisualization()?.widget_data?.summary?.low_confidence || 0 }} fields
-            </p>
+            <p class="summary-value">{{ uiVisualization()?.widget_data?.summary?.low_confidence || 0 }} fields</p>
           </div>
         </div>
       </div>
 
       <div class="confidence-details">
         <h3>Field Confidence Analysis</h3>
-        <div *ngFor="let field of uiVisualization()?.widget_data?.fields" class="confidence-item">
+        <div *ngFor="let field of getVisualizationFields()" class="confidence-item">
           <div class="field-header">
             <span class="field-name">{{ field.field }}</span>
             <span class="confidence-badge" [style.background-color]="getConfidenceColor(field.confidence)">
-              {{ (field.confidence * 100).toFixed(0) }}% - {{ getConfidenceLevel(field.confidence) }}
+              {{ field.confidence.toFixed(0) }}% - {{ getConfidenceLevel(field.confidence) }}
             </span>
           </div>
           <div class="confidence-bar">
             <div
               class="confidence-fill"
-              [style.width.%]="field.confidence * 100"
+              [style.width.%]="field.confidence"
               [style.background-color]="getConfidenceColor(field.confidence)"
             ></div>
           </div>
@@ -200,30 +215,28 @@
       </div>
     </div>
 
-    <!-- Visualization Tab -->
     <div *ngIf="activeTab() === 'visualization'" class="tab-content">
       <div class="visualization-content">
         <h3>Confidence Visualization</h3>
-        
-        <!-- Visualization Error Display -->
+
         <div *ngIf="visualizationError()" class="error-container">
           <div class="error-message-box">
             <h4 class="error-title">⚠️ Validation Error</h4>
             <div class="error-message">
-              <strong>Message:</strong> 
+              <strong>Message:</strong>
               <span>{{ visualizationError()?.message }}</span>
             </div>
             <div *ngIf="visualizationError()?.field" class="error-field">
-              <strong>Field:</strong> 
+              <strong>Field:</strong>
               <span>{{ visualizationError()?.field }}</span>
             </div>
           </div>
         </div>
-        
+
         <div
-          *ngIf="!visualizationError() && uiVisualization()?.widget_data?.html_report"
+          *ngIf="!visualizationError() && trustedHtmlReport()"
           class="html-report"
-          [innerHTML]="uiVisualization()?.widget_data?.html_report"
+          [innerHTML]="trustedHtmlReport()"
         ></div>
         <div *ngIf="!visualizationError() && !uiVisualization()?.widget_data?.html_report" class="loading-spinner">
           Loading visualization...
@@ -231,7 +244,6 @@
       </div>
     </div>
 
-    <!-- PII Information -->
     <div *ngIf="invoice()?.pii" class="pii-section">
       <h3>Privacy Information</h3>
       <p>

@@ -1,5 +1,5 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { InvoiceAPIService } from '../../services/invoice-api.service';
 import { Invoice, ListInvoicesResponse } from '../../types/invoice-api.types';
@@ -20,7 +20,8 @@ export class InvoiceListComponent implements OnInit {
 
   constructor(
     private invoiceAPI: InvoiceAPIService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {}
 
   ngOnInit() {
@@ -96,5 +97,9 @@ export class InvoiceListComponent implements OnInit {
 
   refreshInvoices() {
     this.loadInvoices();
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

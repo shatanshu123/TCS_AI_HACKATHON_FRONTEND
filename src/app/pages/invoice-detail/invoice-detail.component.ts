@@ -2,6 +2,7 @@ import { Component, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { InvoiceAPIService } from '../../services/invoice-api.service';
 import { Invoice, UIConfidenceVisualization, ReviewFields } from '../../types/invoice-api.types';
 
@@ -15,6 +16,7 @@ import { Invoice, UIConfidenceVisualization, ReviewFields } from '../../types/in
 export class InvoiceDetailComponent implements OnInit {
   invoice = signal<Invoice | null>(null);
   uiVisualization = signal<UIConfidenceVisualization | null>(null);
+  trustedHtmlReport = signal<SafeHtml | null>(null);
   readonly Object = Object;
   loading = signal(false);
   error = signal<string | null>(null);
@@ -29,7 +31,8 @@ export class InvoiceDetailComponent implements OnInit {
   constructor(
     private invoiceAPI: InvoiceAPIService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {
@@ -69,11 +72,16 @@ export class InvoiceDetailComponent implements OnInit {
     this.invoiceAPI.getUIConfidenceVisualization(this.invoiceId).subscribe({
       next: (visualization: UIConfidenceVisualization) => {
         this.uiVisualization.set(visualization);
+        this.trustedHtmlReport.set(
+          visualization?.widget_data?.html_report
+            ? this.sanitizer.bypassSecurityTrustHtml(visualization.widget_data.html_report)
+            : null
+        );
         this.visualizationError.set(null);
       },
       error: (err) => {
         console.error('Failed to load visualization:', err);
-        
+        this.trustedHtmlReport.set(null);
         // Extract error information from API response
         const errorInfo = this.extractErrorInfo(err);
         this.visualizationError.set(errorInfo);
@@ -193,15 +201,24 @@ export class InvoiceDetailComponent implements OnInit {
     this.editingFields.set(fields);
   }
 
+  private normalizeConfidence(confidence: number): number {
+    if (confidence > 1) {
+      return confidence / 100;
+    }
+    return confidence;
+  }
+
   getConfidenceColor(confidence: number): string {
-    if (confidence >= 0.8) return '#4CAF50';
-    if (confidence >= 0.5) return '#FFC107';
+    const normalized = this.normalizeConfidence(confidence);
+    if (normalized >= 0.8) return '#4CAF50';
+    if (normalized >= 0.5) return '#FFC107';
     return '#F44336';
   }
 
   getConfidenceLevel(confidence: number): string {
-    if (confidence >= 0.8) return 'High';
-    if (confidence >= 0.5) return 'Medium';
+    const normalized = this.normalizeConfidence(confidence);
+    if (normalized >= 0.8) return 'High';
+    if (normalized >= 0.5) return 'Medium';
     return 'Low';
   }
 
@@ -219,7 +236,7 @@ export class InvoiceDetailComponent implements OnInit {
 
     this.savingChanges.set(true);
     const reviewPayload: ReviewFields = {
-      fields: this.editingFields()
+      fields: this.normalizeReviewFields(this.editingFields())
     };
 
     this.invoiceAPI.reviewInvoice(this.invoiceId, reviewPayload).subscribe({
@@ -236,6 +253,24 @@ export class InvoiceDetailComponent implements OnInit {
         this.savingChanges.set(false);
       }
     });
+  }
+
+  normalizeReviewFields(fields: { [key: string]: string }): { [key: string]: string } {
+    const normalized: { [key: string]: string } = {};
+    const dateAliases = ['date', 'Date', 'DATE'];
+
+    Object.keys(fields).forEach((key) => {
+      const value = fields[key];
+      if (dateAliases.includes(key)) {
+        normalized['invoice_date'] = value;
+      } else if (key === 'invoice_date' && value !== undefined) {
+        normalized[key] = value;
+      } else if (!dateAliases.includes(key)) {
+        normalized[key] = value;
+      }
+    });
+
+    return normalized;
   }
 
   cancelEdit() {
@@ -274,7 +309,16 @@ export class InvoiceDetailComponent implements OnInit {
   }
 
   getExtractionKeys(extraction: Record<string, any> | null | undefined): string[] {
-    return extraction ? Object.keys(extraction) : [];
+    const excludedKeys = ['source', 'tax_id_token'];
+    return extraction
+      ? Object.keys(extraction).filter((key) => !excludedKeys.includes(key))
+      : [];
+  }
+
+  getVisualizationFields(): any[] {
+    return (this.uiVisualization()?.widget_data?.fields || []).filter(
+      (field) => field.field !== 'tax_id_token'
+    );
   }
 
   getInvoiceValidationErrors(): Array<{ field?: string; message: string }> {
@@ -414,7 +458,7 @@ export class InvoiceDetailComponent implements OnInit {
   }
 
   getAverageConfidence(): string {
-    return (this.getVisualizationSummary().average_confidence * 100).toFixed(1);
+    return this.getVisualizationSummary().average_confidence.toFixed(1);
   }
 
   getHighConfidenceCount(): number {

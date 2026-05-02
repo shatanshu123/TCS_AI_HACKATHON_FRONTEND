@@ -2,9 +2,12 @@
   <div class="page-header-fullwidth">
     <div class="page-header-content">
       <h1>All Invoices</h1>
-      <button class="btn btn-primary" (click)="refreshInvoices()" [disabled]="loading()">
-        {{ loading() ? 'Loading...' : 'Refresh' }}
-      </button>
+      <div class="page-header-actions">
+        <button class="btn btn-secondary" (click)="goBack()">Back</button>
+        <button class="btn btn-primary" (click)="refreshInvoices()" [disabled]="loading()">
+          {{ loading() ? 'Loading...' : 'Refresh' }}
+        </button>
+      </div>
     </div>
   </div>
 
